@@ -6,32 +6,17 @@
 
 import numpy as np
 
-# -----------------------------------------------------------------------------
-# Correlation matrix
-# -----------------------------------------------------------------------------
-# class SimilarityMatrix(object):
-#     def __init__(self, features1, masks1, features2, masks2):
-#         self.features = features
-#         nspikes, ndims = self.features.shape
-#         # Default masks.
-#         if masks is None:
-#             masks = np.ones((nspikes, ndims), dtype=np.float32)
-#         self.masks = masks
-#         self.unmask_threshold = 10
-#         self.clear_cache()
-#         self.compute_global_statistics()
-
-#     def clear_cache(self):
-#         self.stats = {}
-
 def compare_clusterings(exp1, exp2):
-    clusters_1, masks_1, features_1 = load_clusters_masks_features(exp1)
-    clusters_2, masks_2, features_2 = load_clusters_masks_features(exp2)
+    clusters_1, masks_1, features_1, cluster_groups_1 = load_clusters_masks_features(exp1)
+    clusters_2, masks_2, features_2, cluster_groups_2 = load_clusters_masks_features(exp2)
 
     cm = compute_matrix(clusters_1, masks_1, features_1,
                           clusters_2, masks_2, features_2)
 
-    return get_similarity_matrix(cm, clusters_1, clusters_2)
+    sm = get_similarity_matrix(cm, clusters_1, clusters_2)
+
+    return sm, clusters_1, cluster_groups_1, clusters_2, cluster_groups_2
+
 
 def load_clusters_masks_features(exp, channel_group=1, clustering='main'):
 
@@ -50,7 +35,14 @@ def load_clusters_masks_features(exp, channel_group=1, clustering='main'):
         else:
             masks = None
 
-        return clusters, masks, features
+
+        clusters_data = getattr(exp.channel_groups[channel_group].clusters, clustering)
+        cluster_groups_data = getattr(exp.channel_groups[channel_group].cluster_groups, clustering)
+        clusters_all = sorted(clusters_data.keys())
+        cluster_groups = np.array([clusters_data[cl].cluster_group or 0
+                                   for cl in clusters_all])
+
+        return clusters, masks, features, cluster_groups
 
 def compute_clustering_statistics(masks, features):
     """Compute global Gaussian statistics for a given clustering from the features and masks."""
