@@ -11,18 +11,18 @@ sm, clusters_1, cluster_groups_1, clusters_2, cluster_groups_2 = compare_cluster
 
 invsm, invclusters_1, invcluster_groups_1, invclusters_2, invcluster_groups_2 = compare_clusterings(compare, orig)
 
-selected_cl_1 = (cluster_groups_1 == 2)
-selected_cl_2 = (cluster_groups_2 == 2)
+# selected_cl_1 = (cluster_groups_1 == 2)
+# selected_cl_2 = (cluster_groups_2 == 2)
 
-cl_numbers_1 = np.unique(clusters_1)[selected_cl_1]
-cl_numbers_2 = np.unique(clusters_2)[selected_cl_2]
+cl_numbers_1 = np.unique(clusters_1)#[selected_cl_1]
+cl_numbers_2 = np.unique(clusters_2)#[selected_cl_2]
 
-sm = sm[(selected_cl_1),:]
-sm = sm[:,(selected_cl_2)]
+# sm = sm[(selected_cl_1),:]
+# sm = sm[:,(selected_cl_2)]
 
 invsm = normalize(invsm)
-invsm = invsm[:, (selected_cl_1)]
-invsm = invsm[(selected_cl_2), :]
+# invsm = invsm[:, (selected_cl_1)]
+# invsm = invsm[(selected_cl_2), :]
 invsm = invsm.T
 
 sm = normalize(sm)
@@ -42,10 +42,11 @@ def patch(x, y, hatch, color, lw=0, alpha=1.):
     return matplotlib.patches.Rectangle((x-0.5, y-0.5), 1, 1,
                                         hatch=hatch, fill=False, color=color, lw=lw, alpha=alpha)
 
+plt.figure(figsize=(15, 25))
 plt.xticks(np.arange(xlen), cl_numbers_2)
 plt.yticks(np.arange(ylen), cl_numbers_1[sortidx])
-plt.xlabel("orig clusters")
-plt.ylabel("compare clusters")
+plt.xlabel(sys.argv[2])
+plt.ylabel(sys.argv[1])
 
 plt.axis([-0.5, xlen-0.5, -0.5, ylen-0.5])
 # plt.imshow(sm, cmap='Reds', interpolation='nearest')
@@ -74,5 +75,5 @@ for i in range(sm.shape[0]): # rows
 # set the limits of the plot to the limits of the data
 # plt.colorbar()
 
-#plt.savefig('mostsim.png')
+# plt.savefig('mostsim.png', height=1000, width=500)
 plt.show()

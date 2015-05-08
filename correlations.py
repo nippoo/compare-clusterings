@@ -166,14 +166,14 @@ def compute_matrix(clusters_1, masks_1, features_1, clusters_2, masks_2, feature
     def _compute_coeff(ci, cj, stats_i, stats_j, sigma2_j, ndims_j, nspikes_j, inv):
 
         if ci not in stats_i or cj not in stats_j:
-            C[ci, cj] = 0.
+            C[ci, cj, inv] = 0.
             return
 
         mui, Ci, logdeti, npointsi, unmaski = stats_i[ci]
         muj, Cj, logdetj, npointsj, unmaskj = stats_j[cj]
 
         if npointsi <= 1 or npointsj <= 1:
-            C[ci, cj] = 0.
+            C[ci, cj, inv] = 0.
             return
 
         dmu = (muj - mui).reshape((-1, 1))
@@ -205,7 +205,6 @@ def compute_matrix(clusters_1, masks_1, features_1, clusters_2, masks_2, feature
         for cj in clusters_unique_2:
             _compute_coeff(ci, cj, stats_1, stats_2, sigma2_2, ndims_2, nspikes_2, False)
             _compute_coeff(cj, ci, stats_2, stats_1, sigma2_1, ndims_1, nspikes_1, True)
-
     return C
 
 def get_similarity_matrix(dic, clusters_x, clusters_y):
@@ -224,9 +223,18 @@ def get_similarity_matrix(dic, clusters_x, clusters_y):
     clusters_rel_x[clusters_x] = np.arange(len(clusters_x))
     clusters_rel_y[clusters_y] = np.arange(len(clusters_y))
 
+    # print matrix.shape
+    # print clumax_x
+    # print clumax_y
+    # print clusters_rel_x
+    # print clusters_rel_y
+
     for (clu0, clu1, inv), value in dic.iteritems():
+        # print "clu0 is", clu0
+        # print "clu1 is", clu1
+        # print clusters_rel_x[clu0], clusters_rel_y[clu1]
         if inv:
-            matrix[clusters_rel_y[clu0], clusters_rel_x[clu1]] = value
+            matrix[clusters_rel_x[clu1], clusters_rel_y[clu0]] = value
         else:
             matrix[clusters_rel_x[clu0], clusters_rel_y[clu1]] = value
 
