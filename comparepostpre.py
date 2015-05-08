@@ -42,7 +42,7 @@ def patch(x, y, hatch, color, lw=0, alpha=1.):
     return matplotlib.patches.Rectangle((x-0.5, y-0.5), 1, 1,
                                         hatch=hatch, fill=False, color=color, lw=lw, alpha=alpha)
 
-plt.figure(figsize=(15, 25))
+plt.figure(figsize=(20, 20))
 plt.xticks(np.arange(xlen), cl_numbers_2)
 plt.yticks(np.arange(ylen), cl_numbers_1[sortidx])
 plt.xlabel(sys.argv[2])
@@ -75,5 +75,5 @@ for i in range(sm.shape[0]): # rows
 # set the limits of the plot to the limits of the data
 # plt.colorbar()
 
-# plt.savefig('mostsim.png', height=1000, width=500)
+# plt.savefig('mostsim.png')
 plt.show()
